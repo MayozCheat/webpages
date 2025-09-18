@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swimming Dragon - 终极游戏体验</title>
+    <style>
+        :root {
+            --primary-color: #00ff9d; /* 霓虹绿 */
+            --dark-bg: #0a1929; /* 深蓝背景 */
+            --card-bg: rgba(15, 35, 55, 0.85); /* 增加透明度 */
+            --text-color: #e0f7ff;
+            --accent-color: #00eeff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 导航栏 - 科技感 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(10, 25, 41, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--primary-color);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 1.1rem;
+            position: relative;
+            padding: 0.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--primary-color);
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* 内容区块 */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 10%;
+            position: relative;
+        }
+
+        /* 英雄区域 - 全息效果 */
+        #hero {
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(10, 40, 70, 0.5) 0%, transparent 70%);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 标题特效 */
+        .title-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 4.5rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            position: relative;
+            z-index: 2;
+            opacity: 0; /* 初始透明 */
+            animation: fadeInTitle 0.5s forwards 1.5s; /* 延迟显示 */
+        }
+
+        /* 标题光效层 */
+        .title-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(0, 255, 157, 0.4), 
+                rgba(0, 238, 255, 0.4), 
+                rgba(0, 255, 157, 0.4));
+            z-index: 1;
+            animation: fillTitle 1.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.2);
+        }
+
+        /* 持续光晕效果 - 降低强度 */
+        .title-container::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: radial-gradient(circle, 
+                rgba(0, 255, 157, 0.15) 0%, 
+                transparent 70%);
+            z-index: 0;
+            opacity: 0;
+            animation: pulseGlow 3s infinite 2.5s;
+            border-radius: 20px;
+        }
+
+        @keyframes fillTitle {
+            0% {
+                width: 0;
+                opacity: 1;
+            }
+            100% {
+                width: 100%;
+                opacity: 0.3; /* 降低透明度 */
+            }
+        }
+
+        @keyframes fadeInTitle {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                opacity: 0.2; /* 降低强度 */
+                transform: scale(0.95);
+            }
+            50% {
+                opacity: 0.4; /* 降低强度 */
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 0.2; /* 降低强度 */
+                transform: scale(0.95);
+            }
+        }
+
+        .tagline {
+            font-size: 1.8rem;
+            margin-bottom: 2.5rem;
+            color: var(--text-color);
+        }
+
+        /* 按钮 - 霓虹效果 */
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
+            z-index: 1;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 157, 0.3), transparent);
+            transition: all 0.6s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover {
+            color: var(--dark-bg);
+            box-shadow: 0 0 30px var(--primary-color);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-color);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* 功能区 - 优化卡片 */
+        #features {
+            background: radial-gradient(circle at top right, rgba(15, 35, 55, 0.8) 0%, transparent 40%);
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 4rem;
+            color: var(--primary-color);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 优化边框动画 - 降低闪烁 */
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, 
+                rgba(0, 255, 157, 0.15), 
+                rgba(0, 238, 255, 0.15), 
+                rgba(0, 255, 157, 0.15));
+            z-index: -1;
+            border-radius: 16px;
+            animation: borderAnimation 8s linear infinite; /* 减慢动画速度 */
+            background-size: 400%;
+        }
+
+        @keyframes borderAnimation {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 100% 0; /* 减少移动距离 */
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 255, 157, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            text-shadow: 0 0 5px var(--primary-color); /* 降低光晕强度 */
+        }
+
+        .feature-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .feature-desc {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #e0f7ff; /* 增强文字对比度 */
+        }
+
+        /* 特性列表 - 全息面板 */
+        #highlights {
+            background: radial-gradient(circle at bottom left, rgba(15, 35, 55, 0.8) 0%, transparent 40%);
+        }
+
+        .highlight-content {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+        }
+
+        .highlight-list {
+            list-style: none;
+        }
+
+        .highlight-list li {
+            margin-bottom: 1.5rem;
+            padding-left: 2.5rem;
+            position: relative;
+            font-size: 1.2rem;
+        }
+
+        .highlight-list li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        /* 下载区域 */
+        #download {
+            text-align: center;
+        }
+
+        .download-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 页脚 */
+        footer {
+            background: rgba(5, 15, 30, 0.9);
+            padding: 3rem 10%;
+            text-align: center;
+            border-top: 1px solid var(--primary-color);
+        }
+
+        .disclaimer {
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+            opacity: 0.7;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem 5%;
+            }
+            
+            .nav-links {
+                gap: 1.2rem;
+            }
+            
+            h1 {
+                font-size: 3rem;
+            }
+            
+            .tagline {
+                font-size: 1.4rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 滚动动画 */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .animate-on-scroll.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">Swimming Dragon</div>
+        <div class="nav-links">
+            <a href="#hero" class="active">首页</a>
+            <a href="#features">功能</a>
+            <a href="#highlights">特性</a>
+            <a href="#download">获取</a>
+        </div>
+    </div>
+
+    <section id="hero">
+        <div class="hero-content">
+            <div class="title-container">
+                <div class="title-glow"></div>
+                <h1>Swimming Dragon</h1>
+            </div>
+            <p class="tagline">超越极限，掌控战场</p>
+            <a href="#download" class="cta-button">立即体验</a>
+        </div>
+    </section>
+
+    <section id="features">
+        <h2 class="section-title">强大功能</h2>
+        <div class="features-grid">
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">👁️</div>
+                <h3 class="feature-title">全视角透视</h3>
+                <p class="feature-desc">穿透墙壁与障碍，洞察敌人位置、物资分布，一切尽在掌握。</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">🗺️</div>
+                <h3 class="feature-title">地图雷达透视</h3>
+                <p class="feature-desc">全局地图信息可视化，敌方动态实时标记，战略部署先人一步。</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">🎯</div>
+                <h3 class="feature-title">智能自瞄</h3>
+                <p class="feature-desc">精准锁定目标，自动修正弹道，大幅提升射击效率与命中率。</p>
+            </div>
+            <div class="feature-card animate-on-scroll">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">掩体漏打</h3>
+                <p class="feature-desc">无视部分掩体阻碍，抓住转瞬即逝的战机，给予对手致命一击。</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="highlights">
+        <div class="highlight-content animate-on-scroll">
+            <h2 class="section-title">为什么选择Swimming Dragon？</h2>
+            <ul class="highlight-list">
+                <li>极致性能：轻量级设计，几乎不影响游戏运行帧率。</li>
+                <li>安全隐蔽：先进的反检测机制，保障账号安全。</li>
+                <li>持续更新：开发团队7x24小时维护，快速适配游戏更新。</li>
+                <li>智能易用：简洁用户界面，一键开启强大功能。</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="download">
+        <div class="download-content animate-on-scroll">
+            <h2 class="section-title">Ready to Dominate?</h2>
+            <p class="tagline">立即获取Swimming Dragon，开启您的终极游戏之旅。</p>
+            <a href="#" class="cta-button">立即下载</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2025 Swimming Dragon. 本网站内容仅为技术演示，不对其合法性作任何保证。</p>
+        <p class="disclaimer">
+            免责声明：本页面所描述的功能旨在用于教育和技术研究目的。使用游戏外挂程序可能违反游戏厂商的用户协议，导致账号封禁，并可能涉及法律风险。请广大玩家遵守游戏规则，公平竞技。
+        </p>
+    </footer>
+
+    <script>
+        // 滚动高亮导航
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            // 滚动动画
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.animate-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+            
+            // 滚动高亮导航项
+            window.addEventListener('scroll', () => {
+                let current = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    
+                    if (pageYOffset >= (sectionTop - sectionHeight / 3)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>
